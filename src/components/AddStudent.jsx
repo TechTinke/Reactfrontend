@@ -1,26 +1,27 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { toast } from 'react-toastify';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 
 const AddStudent = ({ addStudent, setSelectedStudent }) => {
   const [studentData, setStudentData] = useState({
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    admissionNumber: '',
-    grade: ''
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    admissionNumber: "",
+    grade: "",
   });
 
   const handleChange = (field, value) => {
-    setStudentData(prev => ({ ...prev, [field]: value }));
+    setStudentData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { firstName, middleName, lastName, admissionNumber, grade } = studentData;
+    const { firstName, middleName, lastName, admissionNumber, grade } =
+      studentData;
 
     if (!firstName || !middleName || !lastName || !admissionNumber || !grade) {
-      toast.error('All fields are required');
+      toast.error("All fields are required");
       return;
     }
 
@@ -29,39 +30,41 @@ const AddStudent = ({ addStudent, setSelectedStudent }) => {
       middlename: middleName,
       lastname: lastName,
       admission_number: admissionNumber,
-      grade
+      grade,
     };
 
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/students/add', {
-        method: 'POST',
+      const token = localStorage.getItem("token");
+      const res = await fetch("https://backendd-8.onrender.com/students/add", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
         const error = await res.json();
-        throw new Error(error.error || 'Failed to add student');
+        throw new Error(error.error || "Failed to add student");
       }
 
       const data = await res.json();
 
       // Combine full name for local display
-      const fullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
+      const fullName = [firstName, middleName, lastName]
+        .filter(Boolean)
+        .join(" ");
 
       addStudent({ ...payload, name: fullName, id: data.student_id });
-      toast.success('Student added successfully!');
+      toast.success("Student added successfully!");
 
       setStudentData({
-        firstName: '',
-        middleName: '',
-        lastName: '',
-        admissionNumber: '',
-        grade: ''
+        firstName: "",
+        middleName: "",
+        lastName: "",
+        admissionNumber: "",
+        grade: "",
       });
 
       setSelectedStudent(null);
@@ -80,7 +83,7 @@ const AddStudent = ({ addStudent, setSelectedStudent }) => {
           <input
             type="text"
             value={studentData.firstName}
-            onChange={(e) => handleChange('firstName', e.target.value)}
+            onChange={(e) => handleChange("firstName", e.target.value)}
             required
           />
         </div>
@@ -90,7 +93,7 @@ const AddStudent = ({ addStudent, setSelectedStudent }) => {
           <input
             type="text"
             value={studentData.middleName}
-            onChange={(e) => handleChange('middleName', e.target.value)}
+            onChange={(e) => handleChange("middleName", e.target.value)}
             required
           />
         </div>
@@ -100,7 +103,7 @@ const AddStudent = ({ addStudent, setSelectedStudent }) => {
           <input
             type="text"
             value={studentData.lastName}
-            onChange={(e) => handleChange('lastName', e.target.value)}
+            onChange={(e) => handleChange("lastName", e.target.value)}
             required
           />
         </div>
@@ -110,7 +113,7 @@ const AddStudent = ({ addStudent, setSelectedStudent }) => {
           <input
             type="text"
             value={studentData.admissionNumber}
-            onChange={(e) => handleChange('admissionNumber', e.target.value)}
+            onChange={(e) => handleChange("admissionNumber", e.target.value)}
             required
           />
         </div>
@@ -119,11 +122,11 @@ const AddStudent = ({ addStudent, setSelectedStudent }) => {
           <label>Grade:</label>
           <select
             value={studentData.grade}
-            onChange={(e) => handleChange('grade', e.target.value)}
+            onChange={(e) => handleChange("grade", e.target.value)}
             required
           >
             <option value="">Select Grade</option>
-            {Array.from({ length: 12 }, (_, i) => i + 1).map(g => (
+            {Array.from({ length: 12 }, (_, i) => i + 1).map((g) => (
               <option key={g} value={`Grade ${g}`}>{`Grade ${g}`}</option>
             ))}
           </select>

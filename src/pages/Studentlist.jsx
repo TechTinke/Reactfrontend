@@ -1,24 +1,26 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import StudentTable from '../components/StudentTable';
-import Sidebar from '../components/Sidebar';
-import FilterStudents from '../components/FilterStudents';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import StudentTable from "../components/StudentTable";
+import Sidebar from "../components/Sidebar";
+import FilterStudents from "../components/FilterStudents";
 
 const StudentList = () => {
   const [allStudents, setAllStudents] = useState([]);
   const [students, setStudents] = useState([]);
   const [studentToDelete, setStudentToDelete] = useState(null);
-  const [gradeFilter, setGradeFilter] = useState('');
+  const [gradeFilter, setGradeFilter] = useState("");
   const [deleteError, setDeleteError] = useState(null);
   const [filter, setFilter] = useState({
-    admissionNumber: '',
-    grade: '',
+    admissionNumber: "",
+    grade: "",
   });
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await fetch("http://localhost:5000/students/fees/");
+        const response = await fetch(
+          "https://backendd-8.onrender.com/students/fees/"
+        );
         const data = await response.json();
         console.log("Fetched students:", data);
         setAllStudents(data);
@@ -32,10 +34,12 @@ const StudentList = () => {
   }, []);
 
   useEffect(() => {
-    if (gradeFilter === '') {
+    if (gradeFilter === "") {
       setStudents(allStudents);
     } else {
-      const filtered = allStudents.filter(student => student.grade === gradeFilter);
+      const filtered = allStudents.filter(
+        (student) => student.grade === gradeFilter
+      );
       setStudents(filtered);
     }
   }, [gradeFilter, allStudents]);
@@ -53,35 +57,39 @@ const StudentList = () => {
   };
 
   const confirmDelete = () => {
-  if (!studentToDelete?.id) {
-    setDeleteError("Missing student ID.");
-    return;
-  }
+    if (!studentToDelete?.id) {
+      setDeleteError("Missing student ID.");
+      return;
+    }
 
-  fetch(`http://localhost:5000/students/fees/delete_fee_by_student_id/${studentToDelete.id}`, {
-    method: 'DELETE',
-    headers: { 'Content-Type': 'application/json' },
-  })
-    .then(res => {
-      if (!res.ok) {
-        return res.text().then(text => {
-          throw new Error(`Failed to delete student: ${text || res.statusText}`);
-        });
+    fetch(
+      `https://backendd-8.onrender.com/students/fees/delete_fee_by_student_id/${studentToDelete.id}`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
       }
-      return res.json().catch(() => ({}));
-    })
-    .then(() => {
-      const updated = allStudents.filter(s => s.id !== studentToDelete.id);
-      setAllStudents(updated);
-      setStudents(updated);
-      setStudentToDelete(null);
-    })
-    .catch(err => {
-      console.error("Error deleting student:", err);
-      setDeleteError(err.message || "Failed to delete student");
-    });
-};
-
+    )
+      .then((res) => {
+        if (!res.ok) {
+          return res.text().then((text) => {
+            throw new Error(
+              `Failed to delete student: ${text || res.statusText}`
+            );
+          });
+        }
+        return res.json().catch(() => ({}));
+      })
+      .then(() => {
+        const updated = allStudents.filter((s) => s.id !== studentToDelete.id);
+        setAllStudents(updated);
+        setStudents(updated);
+        setStudentToDelete(null);
+      })
+      .catch((err) => {
+        console.error("Error deleting student:", err);
+        setDeleteError(err.message || "Failed to delete student");
+      });
+  };
 
   const cancelDelete = () => {
     setStudentToDelete(null);
@@ -89,36 +97,50 @@ const StudentList = () => {
   };
 
   const updateStudentFee = (id, amountPaid) => {
-    fetch(`http://localhost:5000/students/fees/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+    fetch(`https://backendd-8.onrender.com/students/fees/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amountPaid }),
     })
-      .then(res => res.json())
-      .then(data => {
-        const updated = allStudents.map(student =>
+      .then((res) => res.json())
+      .then((data) => {
+        const updated = allStudents.map((student) =>
           student.id === id ? data : student
         );
         setAllStudents(updated);
         setStudents(updated);
       })
-      .catch(err => console.error("Update fee error:", err));
+      .catch((err) => console.error("Update fee error:", err));
   };
 
-  const DeleteConfirmationModal = ({ student, confirmDelete, cancelDelete, error }) => {
+  const DeleteConfirmationModal = ({
+    student,
+    confirmDelete,
+    cancelDelete,
+    error,
+  }) => {
     if (!student) return null;
 
-    const fullName = `${student.firstname || ''} ${student.middlename || ''} ${student.lastname || ''}`.trim();
+    const fullName = `${student.firstname || ""} ${student.middlename || ""} ${
+      student.lastname || ""
+    }`.trim();
 
     return (
       <div className="delete-confirmation-overlay">
         <div className="delete-confirmation-modal">
           <h3>Confirm Deletion</h3>
-          <p>Are you sure you want to delete <strong>{fullName}</strong>'s fee record?</p>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+          <p>
+            Are you sure you want to delete <strong>{fullName}</strong>'s fee
+            record?
+          </p>
+          {error && <p style={{ color: "red" }}>{error}</p>}
           <div className="modal-buttons">
-            <button className="cancel-btn" onClick={cancelDelete}>Cancel</button>
-            <button className="confirm-delete-btn" onClick={confirmDelete}>Delete</button>
+            <button className="cancel-btn" onClick={cancelDelete}>
+              Cancel
+            </button>
+            <button className="confirm-delete-btn" onClick={confirmDelete}>
+              Delete
+            </button>
           </div>
         </div>
       </div>

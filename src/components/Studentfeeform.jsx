@@ -1,35 +1,36 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { toast } from 'react-toastify';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 
 // Use correct IDs matching your database
 const ALLOWED_ACTIVITIES = [
-  { id: 4, label: 'Drama Club :1000' },
-  { id: 5, label: 'Music Club :1200' },
-  { id: 6, label: 'Football Club :800' },
-  { id: 7, label: 'Chess Club :600' },
-  { id: 8, label: 'Debate Club :700' },
-  { id: 9, label: 'Badminton :900' },
-  { id: 10, label: 'Swimming :1500' },
+  { id: 4, label: "Drama Club :1000" },
+  { id: 5, label: "Music Club :1200" },
+  { id: 6, label: "Football Club :800" },
+  { id: 7, label: "Chess Club :600" },
+  { id: 8, label: "Debate Club :700" },
+  { id: 9, label: "Badminton :900" },
+  { id: 10, label: "Swimming :1500" },
 ];
 
 const StudentFeeAndActivityForm = () => {
   const [formData, setFormData] = useState({
-    admissionNumber: '',
-    activityId: '',
-    activityAmountPaid: '',
-    feeAmountPaid: '',
-    feeDate: '', // ✅ Date field added
-    paymentStatus: 'pending',
+    admissionNumber: "",
+    activityId: "",
+    activityAmountPaid: "",
+    feeAmountPaid: "",
+    feeDate: "", // ✅ Date field added
+    paymentStatus: "pending",
   });
 
   const handleChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleActivitySubmit = async (e) => {
     e.preventDefault();
-    const { admissionNumber, activityId, activityAmountPaid, paymentStatus } = formData;
+    const { admissionNumber, activityId, activityAmountPaid, paymentStatus } =
+      formData;
 
     if (!admissionNumber || !activityId || !activityAmountPaid) {
       toast.error("Fill all activity fields");
@@ -37,25 +38,28 @@ const StudentFeeAndActivityForm = () => {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/students/activities/student/${admissionNumber}/activities`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          activity_id: parseInt(activityId),
-          amount_paid: parseFloat(activityAmountPaid),
-          payment_status: paymentStatus,
-        }),
-      });
+      const res = await fetch(
+        `https://backendd-8.onrender.com/students/activities/student/${admissionNumber}/activities`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            activity_id: parseInt(activityId),
+            amount_paid: parseFloat(activityAmountPaid),
+            payment_status: paymentStatus,
+          }),
+        }
+      );
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Failed to add activity');
-      toast.success('Activity payment saved!');
+      if (!res.ok) throw new Error(data.message || "Failed to add activity");
+      toast.success("Activity payment saved!");
     } catch (err) {
       console.error(err);
-      toast.error('Error adding activity payment');
+      toast.error("Error adding activity payment");
     }
   };
 
@@ -69,23 +73,26 @@ const StudentFeeAndActivityForm = () => {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/students/fees/${admissionNumber}/fees`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: parseFloat(feeAmountPaid),
-          date: feeDate, // ✅ Use selected date
-        }),
-      });
+      const res = await fetch(
+        `https://backendd-8.onrender.com/students/fees/${admissionNumber}/fees`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            amount: parseFloat(feeAmountPaid),
+            date: feeDate, // ✅ Use selected date
+          }),
+        }
+      );
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Failed to record fee');
-      toast.success('Fee payment recorded!');
+      if (!res.ok) throw new Error(data.message || "Failed to record fee");
+      toast.success("Fee payment recorded!");
     } catch (err) {
       console.error(err);
-      toast.error('Error recording fee payment');
+      toast.error("Error recording fee payment");
     }
   };
 
@@ -98,7 +105,7 @@ const StudentFeeAndActivityForm = () => {
           <input
             type="text"
             value={formData.admissionNumber}
-            onChange={e => handleChange('admissionNumber', e.target.value)}
+            onChange={(e) => handleChange("admissionNumber", e.target.value)}
             required
           />
         </div>
@@ -108,11 +115,13 @@ const StudentFeeAndActivityForm = () => {
           <label>Activity:</label>
           <select
             value={formData.activityId}
-            onChange={e => handleChange('activityId', e.target.value)}
+            onChange={(e) => handleChange("activityId", e.target.value)}
           >
             <option value="">Select Activity</option>
-            {ALLOWED_ACTIVITIES.map(activity => (
-              <option key={activity.id} value={activity.id}>{activity.label}</option>
+            {ALLOWED_ACTIVITIES.map((activity) => (
+              <option key={activity.id} value={activity.id}>
+                {activity.label}
+              </option>
             ))}
           </select>
         </div>
@@ -122,7 +131,7 @@ const StudentFeeAndActivityForm = () => {
           <input
             type="number"
             value={formData.activityAmountPaid}
-            onChange={e => handleChange('activityAmountPaid', e.target.value)}
+            onChange={(e) => handleChange("activityAmountPaid", e.target.value)}
           />
         </div>
 
@@ -144,7 +153,7 @@ const StudentFeeAndActivityForm = () => {
           <input
             type="number"
             value={formData.feeAmountPaid}
-            onChange={e => handleChange('feeAmountPaid', e.target.value)}
+            onChange={(e) => handleChange("feeAmountPaid", e.target.value)}
           />
         </div>
 
@@ -153,7 +162,7 @@ const StudentFeeAndActivityForm = () => {
           <input
             type="date"
             value={formData.feeDate}
-            onChange={e => handleChange('feeDate', e.target.value)}
+            onChange={(e) => handleChange("feeDate", e.target.value)}
           />
         </div>
 

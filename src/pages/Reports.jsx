@@ -1,28 +1,31 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 const Reports = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/students/fees/')
+    fetch("https://backendd-8.onrender.com/students/fees/")
       .then((res) => res.json())
       .then((data) => {
         setStudents(data);
         setLoading(false);
       })
       .catch((err) => {
-        console.error('Error fetching student data:', err);
+        console.error("Error fetching student data:", err);
         setLoading(false);
       });
   }, []);
 
-  const paidCount = students.filter((s) => s.feeStatus === 'paid').length;
-  const pendingCount = students.filter((s) => s.feeStatus === 'pending').length;
-  const partialCount = students.filter((s) => s.feeStatus === 'partial').length;
+  const paidCount = students.filter((s) => s.feeStatus === "paid").length;
+  const pendingCount = students.filter((s) => s.feeStatus === "pending").length;
+  const partialCount = students.filter((s) => s.feeStatus === "partial").length;
 
-  const totalAmountPaid = students.reduce((total, s) => total + (s.amountPaid || 0), 0);
+  const totalAmountPaid = students.reduce(
+    (total, s) => total + (s.amountPaid || 0),
+    0
+  );
 
   if (loading) return <p>Loading...</p>;
 

@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import Sidebar from '../components/Sidebar';
-import FilterActivity from '../components/FilterActivity';
-import ActivityTable from '../components/ActivityTable';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import Sidebar from "../components/Sidebar";
+import FilterActivity from "../components/FilterActivity";
+import ActivityTable from "../components/ActivityTable";
 
 const StudentActivity = () => {
   const [activities, setActivities] = useState([]);
   const [filteredActivities, setFilteredActivities] = useState([]);
-  const [gradeFilter, setGradeFilter] = useState('');
+  const [gradeFilter, setGradeFilter] = useState("");
   const [filter, setFilter] = useState({
-    admissionNumber: '',
-    grade: '',
-    amountPaid: '',
-    date: '',
+    admissionNumber: "",
+    grade: "",
+    amountPaid: "",
+    date: "",
   });
   const [studentToDelete, setStudentToDelete] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
@@ -20,7 +20,9 @@ const StudentActivity = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const response = await fetch("http://localhost:5000/students/activities/");
+        const response = await fetch(
+          "https://backendd-8.onrender.com/students/activities/"
+        );
         const data = await response.json();
         setActivities(data);
         setFilteredActivities(data);
@@ -36,7 +38,7 @@ const StudentActivity = () => {
     if (!gradeFilter) {
       setFilteredActivities(activities);
     } else {
-      const filtered = activities.filter(a => a.grade === gradeFilter);
+      const filtered = activities.filter((a) => a.grade === gradeFilter);
       setFilteredActivities(filtered);
     }
   }, [gradeFilter, activities]);
@@ -60,21 +62,24 @@ const StudentActivity = () => {
       return;
     }
 
-    fetch(`http://localhost:5000/students/activities/${studentToDelete.id}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-    })
-      .then(res => {
+    fetch(
+      `https://backendd-8.onrender.com/students/activities/${studentToDelete.id}`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      }
+    )
+      .then((res) => {
         if (!res.ok) throw new Error("Failed to delete activity");
         return res.json();
       })
       .then(() => {
-        const updated = activities.filter(a => a.id !== studentToDelete.id);
+        const updated = activities.filter((a) => a.id !== studentToDelete.id);
         setActivities(updated);
         setFilteredActivities(updated);
         setStudentToDelete(null);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Delete error:", err);
         setDeleteError("Failed to delete activity");
       });
@@ -105,10 +110,7 @@ const StudentActivity = () => {
           Student Activities ({filteredActivities.length})
         </motion.h2>
 
-        <FilterActivity
-          filter={filter}
-          setFilter={setFilter}
-        />
+        <FilterActivity filter={filter} setFilter={setFilter} />
 
         <ActivityTable
           students={filteredActivities}
@@ -121,21 +123,31 @@ const StudentActivity = () => {
       {/* Inline Delete Confirmation Modal */}
       {studentToDelete && (
         <div className="modal-overlay">
-          <motion.div 
+          <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ opacity: 0 }}
             className="modal-content"
           >
             <h3>Confirm Deletion</h3>
-            <p>Are you sure you want to delete <strong>
-              {`${studentToDelete.firstname || ''} ${studentToDelete.middlename || ''} ${studentToDelete.lastname || ''}`.trim()}
-            </strong>'s activity?</p>
+            <p>
+              Are you sure you want to delete{" "}
+              <strong>
+                {`${studentToDelete.firstname || ""} ${
+                  studentToDelete.middlename || ""
+                } ${studentToDelete.lastname || ""}`.trim()}
+              </strong>
+              's activity?
+            </p>
             {deleteError && <p className="error-message">{deleteError}</p>}
 
             <div className="modal-buttons">
-              <button onClick={cancelDelete} className="cancel-button">Cancel</button>
-              <button onClick={confirmDelete} className="confirm-button">Yes, Delete</button>
+              <button onClick={cancelDelete} className="cancel-button">
+                Cancel
+              </button>
+              <button onClick={confirmDelete} className="confirm-button">
+                Yes, Delete
+              </button>
             </div>
           </motion.div>
         </div>

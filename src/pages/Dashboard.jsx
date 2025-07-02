@@ -1,16 +1,15 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import AddStudent from '../components/AddStudent';
-import StudentFeeAndActivityForm from '../components/Studentfeeform';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import AddStudent from "../components/AddStudent";
+import StudentFeeAndActivityForm from "../components/Studentfeeform";
 
-
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Dashboard = () => {
   const [filter, setFilter] = useState({
-    admissionNumber: '',
-    grade: '',
+    admissionNumber: "",
+    grade: "",
   });
 
   const [students, setStudents] = useState([]);
@@ -20,11 +19,18 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await fetch("http://localhost:5000/students/fees/");
+        const response = await fetch(
+          "https://backendd-8.onrender.com/students/fees/"
+        );
         const data = await response.json();
-        const studentsWithStatus = data.map(student => ({
+        const studentsWithStatus = data.map((student) => ({
           ...student,
-          feeStatus: student.amountPaid === 50000 ? 'paid' : student.amountPaid > 0 ? 'partial' : 'pending'
+          feeStatus:
+            student.amountPaid === 50000
+              ? "paid"
+              : student.amountPaid > 0
+              ? "partial"
+              : "pending",
         }));
         setStudents(studentsWithStatus);
         setFilteredStudents(studentsWithStatus);
@@ -41,13 +47,13 @@ const Dashboard = () => {
     let results = students;
 
     if (admissionNumber) {
-      results = results.filter(student => 
+      results = results.filter((student) =>
         student.admissionNumber.includes(admissionNumber)
       );
     }
 
     if (grade) {
-      results = results.filter(student => student.grade === grade);
+      results = results.filter((student) => student.grade === grade);
     }
 
     setFilteredStudents(results);
@@ -61,8 +67,8 @@ const Dashboard = () => {
 
   const clearFilters = () => {
     setFilter({
-      admissionNumber: '',
-      grade: '',
+      admissionNumber: "",
+      grade: "",
     });
     setFilteredStudents(students);
     setSelectedStudent(null);
@@ -79,9 +85,9 @@ const Dashboard = () => {
       className="dashboard"
     >
       <h1>Student Fee Management</h1>
-      
+
       <div className="dashboard-grid">
-        <motion.div 
+        <motion.div
           whileHover={{ scale: 1.02 }}
           className="card add-student-card"
         >
@@ -95,27 +101,22 @@ const Dashboard = () => {
             selectedStudent={selectedStudent}
             setSelectedStudent={setSelectedStudent}
           />
-        
         </motion.div>
-        <StudentFeeAndActivityForm/>
-        
-        <motion.div >
-          
-        </motion.div>
+        <StudentFeeAndActivityForm />
 
-        
+        <motion.div></motion.div>
       </div>
 
-      <ToastContainer 
-        position="top-center" 
-        autoClose={3000} 
-        hideProgressBar={false} 
-        newestOnTop={false} 
-        closeOnClick 
-        rtl={false} 
-        pauseOnFocusLoss 
-        draggable 
-        pauseOnHover 
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
         theme="colored"
       />
     </motion.div>
